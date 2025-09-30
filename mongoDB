@@ -1,0 +1,62 @@
+Q1 ......
+
+ db.products.aggregate({$match:{price:{$gte:1000}}})
+
+Q2 .......
+
+> db.products.aggregate([{$group:{_id:{"category":"$category"},"no of product":{$sum:1},}}]);
+
+Q3 .......
+
+ db.products.aggregate([{$group:{_id:{"category":"$category"},"max price is":{$max:"$price"},"min price is ":{$min:"$price"}}}]);
+Q4 .......
+db.products.aggregate([{$sort:{price:-1}},{$project:{_id:-1,name:1,price:1}},{$limit:3}]);
+
+Q5 .............
+db.products.aggregate([{$group:{_id:"$supplier.country",price:{$avg:"$price"}}}])
+
+Q6 ...............
+ db.products.aggregate([{$match:{stock:{$gte:10} } },{$project:{name:1,stock:1}}])
+
+
+Q7. Find total stock value (price × stock) of each category. ( complex and tricky)
+db.products.aggregate([
+  {
+    $project: {
+      tvalue: { $multiply: ["$price", "$stock"] },
+      category: 1}},
+  {
+    $group: {
+      _id: "$category",
+      tsum: { $sum: "$tvalue" }
+    }
+  }
+])
+ 
+Q8. Get the most recent 5 products added (sorted by createdAt).
+ 
+db.products.aggregate([
+  {
+"$sort":{"createdAt":-1}
+ 
+},{$limit:5}])
+ 
+Q9. Find all categories having more than 2 products.
+db.products.aggregate([
+{$group:{_id:"$category",productCount:{$sum:1}}},
+{$match:{productCount:{$gt:2}}}
+])
+ 
+Q10. Get the top 2 categories with the highest total revenue (price × stock).
+db.products.aggregate([
+{$group:{_id:"$category",totalRevenue:{$sum:{$multiply:["$price","$stock"]}}}},
+{$sort:{totalRevenue:-1}},
+{$limit:2}
+])
+ 
+Q11. Find the top-rated product in each category (based on average rating).
+db.products.aggregate([
+{$addFields:{avgRating:{$avg:"$ratings.score"}}},
+{$sort:{avgRating:-1}},
+{$group:{_id:"$category",topProduct:{$first:"$name"},avgRating:{$first:"$avgRating"}}}
+])
