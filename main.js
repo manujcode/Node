@@ -11,9 +11,10 @@ app.use('/professor',yatriEx)
 app.use('/employee',yatriEx)
 
 
-
+   
 
 
 app.listen(3000,()=>{
     console.log("server connected sss")
+
 })
