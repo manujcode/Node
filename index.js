@@ -1,64 +1,32 @@
-var express = require('express')
-var app = express();
-const morgan = require("morgan");
-const {createWriteStream} = require("fs");
-let {join} = require('path')
-const logFile = join(__dirname, "blogchefNew.log");   // create the log file in the current project directory
+//This file is to be executed before writeFileSync.js
+let fs = require('fs')
+var obj = require('./writeFileSync')   //loading the user defined module / local module
 
-app.set('view engine','pug')
-app.set('views', './views')
- 
- 
-/*--------------Morgan module ------------------*/
-app.use(morgan(":method - :url - :date - :response-time ms"));  // morgan template
-app.use(
-  morgan(":method -:url - :date - :response-time ms", {
-    stream: createWriteStream(logFile, { flags: "a" }),
-  })
-);
-//---------------- end ------------------------//
-// const products = ['Watch', 'Oven', 'Microwave', 'Phone', 'tablet', 'Laptop', 'pen drive']
-// const clothing = ['Jeans', 'Tshirts', 'Coats', 'Jackets', 'caps', 'mufler']
+var readLine = require('readline');  // this interface is used to read the data from the console
 
-app.get('/index', (req,res)=>{
-  res.render('index')
+var r1 = readLine.createInterface({
+    input : process.stdin,
+    output: process.stdout
+});
+
+r1.question('Enter name', function(name){
+    r1.question('Enter price', function(price){
+        obj.writeCustomer(name,price)
+    });
 })
+  
+// function writeProducts(data){
 
-app.get('/welcome', (req,res)=>{
-    res.render('welcome')
-  })
+//     fs.writeFileSync('backup_Product.json',data,{"mode":0o444,flag:'r'});
 
-app.get('/register', (req,res)=>{
-    res.render('register')
-  })
-
-app.listen(8080, ()=>{
-    console.log(' The server has started on port no 8080..')
-})
+// }
 
 
-// app.listen(3000,()=>{
-//     console.log("server started success")
-// })
+//  function readProduct(){
+//       let data = fs.readFileSync('product.json','utf-8')
+
+// }
 
 
 
 
-
-
-
-
-
-
-
-
-
-// ==================
-
-//   Doctype
-//   html
-//      head
-//         title Exploring the Pug template
-//      body
-//         h1#myHeading This is a pug template
-//         p.firstParagraph I love this template!!!
